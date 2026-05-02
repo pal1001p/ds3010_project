@@ -1,0 +1,180 @@
+--------------------------(regression.py)
+
+1. Initial feature selection 
+
+Remove the target variable of "Sale Amount"
+
+Remove columns that are related/won't be relevant for the model (we will be displaying our results on a map, 
+so coordinate features aren't necessary): "Sales Ratio",
+                                            "Serial Number",
+                                            "Address",
+                                            "Date Recorded",
+                                            "Location",
+                                            "zip_x",
+                                            "zip_y"
+                            
+
+2. We use a ridge regression to keep coefficients more stable
+Run on entire dataset (prices range up to $160,000,000)
+
+MAE: 99,863.07
+RMSE: 567,731.59
+R^2: 0.9331
+
+Coefficient ranking for all source columns:
+ 1. Assessed Value: aggregated_abs_coef=1883850.6343, net_direction=positive
+ 2. Property Type: aggregated_abs_coef=1617471.1330, net_direction=negative
+ 3. Rank (of 177): aggregated_abs_coef=440594.9093, net_direction=negative
+ 4. Town: aggregated_abs_coef=440594.9093, net_direction=negative
+ 5. Residential Type: aggregated_abs_coef=69143.3009, net_direction=negative
+ 6. List Year: aggregated_abs_coef=8843.4937, net_direction=negative
+ 7. # High Schools: aggregated_abs_coef=7082.3954, net_direction=positive
+ 8. # Elementary Schools: aggregated_abs_coef=5554.4354, net_direction=positive
+ 9. # Private Schools*: aggregated_abs_coef=4380.1270, net_direction=negative
+10. Total NIBRS Crimes: aggregated_abs_coef=3680.0185, net_direction=positive
+11. Population: aggregated_abs_coef=3014.0832, net_direction=negative
+12. Rank score (2025): aggregated_abs_coef=2254.7938, net_direction=negative
+13. town_population: aggregated_abs_coef=2053.5093, net_direction=negative
+14. air_quality: aggregated_abs_coef=1647.1358, net_direction=negative
+15. # Middle Schools: aggregated_abs_coef=1515.3423, net_direction=negative
+16. zip_population: aggregated_abs_coef=1234.3268, net_direction=negative
+17. Crime Rate per 1000: aggregated_abs_coef=1186.0759, net_direction=positive
+18. zip_density: aggregated_abs_coef=177.5593, net_direction=negative
+19. aian_total_pop: aggregated_abs_coef=112.7014, net_direction=positive
+
+Top contextual features among selected columns:
+- Rank (of 177): aggregated_abs_coef=440594.9093
+- # High Schools: aggregated_abs_coef=7082.3954
+- # Elementary Schools: aggregated_abs_coef=5554.4354
+- # Private Schools*: aggregated_abs_coef=4380.1270
+- Total NIBRS Crimes: aggregated_abs_coef=3680.0185
+- Population: aggregated_abs_coef=3014.0832
+- Rank score (2025): aggregated_abs_coef=2254.7938
+- town_population: aggregated_abs_coef=2053.5093
+- air_quality: aggregated_abs_coef=1647.1358
+- # Middle Schools: aggregated_abs_coef=1515.3423
+
+
+3. Now running on houses under $3,000,000 (99 percent of data), since we are targeting home buyers
+
+MAE: 68,827.54
+RMSE: 125,386.68
+R^2: 0.8697
+
+Coefficient ranking for all source columns:
+ 1. Property Type: aggregated_abs_coef=718498.6500, net_direction=negative
+ 2. Rank (of 177): aggregated_abs_coef=497802.8203, net_direction=positive
+ 3. Town: aggregated_abs_coef=497802.8203, net_direction=positive
+ 4. Assessed Value: aggregated_abs_coef=307725.6051, net_direction=positive
+ 5. Residential Type: aggregated_abs_coef=126663.0817, net_direction=positive
+ 6. Rank score (2025): aggregated_abs_coef=18015.5946, net_direction=positive
+ 7. Crime Rate per 1000: aggregated_abs_coef=8388.0595, net_direction=negative
+ 8. town_population: aggregated_abs_coef=8068.0667, net_direction=positive
+ 9. List Year: aggregated_abs_coef=7933.1157, net_direction=positive
+10. Population: aggregated_abs_coef=6826.4235, net_direction=positive
+11. # Private Schools*: aggregated_abs_coef=6263.6702, net_direction=positive
+12. # Elementary Schools: aggregated_abs_coef=6247.3482, net_direction=negative
+13. # High Schools: aggregated_abs_coef=5810.5552, net_direction=positive
+14. Total NIBRS Crimes: aggregated_abs_coef=3827.6020, net_direction=positive
+15. # Middle Schools: aggregated_abs_coef=3148.7230, net_direction=negative
+16. air_quality: aggregated_abs_coef=1561.9797, net_direction=negative
+17. zip_population: aggregated_abs_coef=791.4168, net_direction=positive
+18. aian_total_pop: aggregated_abs_coef=511.6036, net_direction=negative
+19. zip_density: aggregated_abs_coef=107.8712, net_direction=positive
+
+Top contextual features among selected columns:
+- Rank (of 177): aggregated_abs_coef=497802.8203
+- Rank score (2025): aggregated_abs_coef=18015.5946
+- Crime Rate per 1000: aggregated_abs_coef=8388.0595
+- town_population: aggregated_abs_coef=8068.0667
+- Population: aggregated_abs_coef=6826.4235
+- # Private Schools*: aggregated_abs_coef=6263.6702
+- # Elementary Schools: aggregated_abs_coef=6247.3482
+- # High Schools: aggregated_abs_coef=5810.5552
+- Total NIBRS Crimes: aggregated_abs_coef=3827.6020
+- # Middle Schools: aggregated_abs_coef=3148.7230
+
+
+4. Checking colinear features
+
+- town_population vs Population: corr=0.9990
+- zip_population vs aian_total_pop: corr=0.9793
+- # Elementary Schools vs # High Schools: corr=0.8988
+- Crime Rate per 1000 vs Total NIBRS Crimes: corr=0.8765
+- # Elementary Schools vs Total NIBRS Crimes: corr=0.8275
+- # Elementary Schools vs Population: corr=0.8205
+- # Elementary Schools vs town_population: corr=0.8124
+
+Thus, we remove "# Elementary Schools",
+                    "Population",
+                    "zip_population",
+                    "aian_total_pop",
+                    "Total NIBRS Crimes"
+
+5. Final run
+MAE: 68,823.61
+RMSE: 125,385.38
+R^2: 0.8697
+
+Coefficient ranking for all source columns:
+ 1. Property Type: aggregated_abs_coef=717149.9138, net_direction=negative
+ 2. Rank (of 177): aggregated_abs_coef=497706.1161, net_direction=positive
+ 3. Town: aggregated_abs_coef=497706.1161, net_direction=positive
+ 4. Assessed Value: aggregated_abs_coef=307710.9046, net_direction=positive
+ 5. Residential Type: aggregated_abs_coef=126178.0872, net_direction=positive
+ 6. Rank score (2025): aggregated_abs_coef=17917.7233, net_direction=positive
+ 7. town_population: aggregated_abs_coef=11881.9608, net_direction=positive
+ 8. List Year: aggregated_abs_coef=7952.0278, net_direction=positive
+ 9. Crime Rate per 1000: aggregated_abs_coef=7551.1034, net_direction=negative
+10. # Private Schools*: aggregated_abs_coef=7107.0229, net_direction=positive
+11. # High Schools: aggregated_abs_coef=4524.5264, net_direction=positive
+12. # Middle Schools: aggregated_abs_coef=3632.3200, net_direction=negative
+13. air_quality: aggregated_abs_coef=1322.6003, net_direction=negative
+14. zip_density: aggregated_abs_coef=74.7382, net_direction=positive
+
+Top contextual features among selected columns:
+- Rank (of 177): aggregated_abs_coef=497706.1161
+- Rank score (2025): aggregated_abs_coef=17917.7233
+- town_population: aggregated_abs_coef=11881.9608
+- Crime Rate per 1000: aggregated_abs_coef=7551.1034
+- # Private Schools*: aggregated_abs_coef=7107.0229
+- # High Schools: aggregated_abs_coef=4524.5264
+- # Middle Schools: aggregated_abs_coef=3632.3200
+- air_quality: aggregated_abs_coef=1322.6003
+- zip_density: aggregated_abs_coef=74.7382
+
+
+--------------------------(best_regression.py)
+
+6. Finding best combination of 7 features (half of features) that could be used in end product 
+We train on a random subset of the data (houses under $3,000,000) because it is infeasible to train on all (too many combinations, runtime blows up)
+
+Tried testing on 1000, 2000, 10000 and 100000, but final model performance did not change, so sticking to 1000 samples
+
+Using MAE (not R^2 because not ideal for cases where overfitting may be occurring, and not RMSE because it blows up with outliers,
+and even in the trimmed dataset, majority of houses are under $500,000) to see which combination of 7 features from the 14 selected features
+has the best MAE
+
+Result:
+  Assessed Value: positive (323785.2180)
+  List Year: positive (8455.0706)
+  # High Schools: positive (6774.1455)
+  # Middle Schools: positive (4264.9583)
+  town_population: positive (3460.9402)
+  air_quality: negative (2323.0660)
+  # Private Schools*: negative (200.9191)
+
+
+We then test this on our model from before
+
+FINAL MODEL PERFORMANCE (7 features from above)
+MAE: $76,391.37
+RMSE: $134,953.79
+R²: 0.8490
+
+Understandably, this performs worse than using all 14 features, but since the price range is up to $3,000,000, with majority being 
+under $500,000, this isn't too bad
+
+
+--------------------------(prediction.py)
+Input various params in main(), then run script to see prediction with confidence intervals
