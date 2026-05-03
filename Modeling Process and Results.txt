@@ -175,6 +175,23 @@ R²: 0.8490
 Understandably, this performs worse than using all 14 features, but since the price range is up to $3,000,000, with majority being 
 under $500,000, this isn't too bad
 
+7. Now we train on a random subset of data of houses under $1,000,000 (cutting out more outliers) and those that are only residential properties.
+
+We get:
+
+  Assessed Value: positive (182930.1422)
+  # High Schools: positive (15139.7334)
+  List Year: positive (14167.4798)
+  air_quality: negative (6239.6059)
+  Rank score (2025): positive (5341.2214)
+  # Middle Schools: positive (4972.0641)
+  Crime Rate per 1000: negative (2133.2257)
+
+FINAL MODEL PERFORMANCE (7 features from above)
+MAE: $51,946.73
+RMSE: $70,865.18
+R²: 0.8668
+
 
 --------------------------(prediction.py)
 Input various params in main(), then run script to see prediction with confidence intervals

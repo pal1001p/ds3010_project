@@ -280,7 +280,8 @@ def main() -> None:
             df[col] = pd.to_numeric(cleaned, errors="coerce")
 
     # 99 percent of houses sold for under $3,000,000
-    df = df[df['Sale Amount'] < 3000000]
+    df = df[df['Sale Amount'] < 1000000]
+    df= df[df['Property Type'] == 'Residential']
 
     # Do not include raw target leakage columns in features.
     # "Sales Ratio" is derived from sale amount and assessed value, so we exclude it.
