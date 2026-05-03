@@ -1,0 +1,3 @@
+margin_of_error = 138893.71197873112
+residual_std = 70863.21733800818
+confidence_level = 0.95
